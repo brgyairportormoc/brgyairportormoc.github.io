@@ -985,11 +985,57 @@ cursor:pointer;
 <!-- CONTENT -->
 <div style="padding:15px;display:flex;flex-direction:column;gap:10px;">
 
+<!-- MOTHER NAME -->
 <label>Mother Name</label>
-<input type="text" name="Mother Name">
 
+<div style="
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+">
+
+<input type="text"
+name="Mother First Name"
+placeholder="First Name"
+style="flex:1;min-width:100px;">
+
+<input type="text"
+name="Mother Middle Name"
+placeholder="Middle Name"
+style="flex:1;min-width:100px;">
+
+<input type="text"
+name="Mother Last Name"
+placeholder="Last Name"
+style="flex:1;min-width:100px;">
+
+</div>
+
+<!-- FATHER NAME -->
 <label>Father Name</label>
-<input type="text" name="Father Name">
+
+<div style="
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+">
+
+<input type="text"
+name="Father First Name"
+placeholder="First Name"
+style="flex:1;min-width:100px;">
+
+<input type="text"
+name="Father Middle Name"
+placeholder="Middle Name"
+style="flex:1;min-width:100px;">
+
+<input type="text"
+name="Father Last Name"
+placeholder="Last Name"
+style="flex:1;min-width:100px;">
+
+</div>
 
 <label>Child Weight (kg)</label>
 <input type="number" name="Weight" step="0.1" placeholder="Enter weight">
@@ -2408,8 +2454,17 @@ function openFamilyProfile(r){
 
       <div class="window-card-content">
 
-        <div><b>Mother Name:</b> ${r['Mother Name'] || ''}</div>
-        <div><b>Father Name:</b> ${r['Father Name'] || ''}</div>
+        <div><b>Mother Name:</b>
+  ${r['Mother First Name'] || ''} 
+  ${r['Mother Middle Name'] || ''} 
+  ${r['Mother Last Name'] || ''}
+</div>
+
+<div><b>Father Name:</b>
+  ${r['Father First Name'] || ''} 
+  ${r['Father Middle Name'] || ''} 
+  ${r['Father Last Name'] || ''}
+</div>
         <div><b>Child Weight:</b> ${r['Child Weight'] || ''} kg</div>
         <div><b>Child Height:</b> ${r['Child Height'] || ''} cm</div>
 
@@ -2475,7 +2530,6 @@ fetchResidents();
 </script>
 </body>
 </html>
-
 
 
 
