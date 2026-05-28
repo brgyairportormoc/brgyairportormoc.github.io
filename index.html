@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRGY Resident Management</title>
+<style>
+*{margin:0;padding:0;font-family:Arial, Helvetica, sans-serif;}
+body{background-color:#5e5c73;}
+.container{max-width:900px;margin:auto;padding:10px;}
+.tab-buttons{display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap;}
+.tab-buttons button{
+  flex:1;padding:10px;font-weight:bold;border:none;border-radius:6px;
+  cursor:pointer;background:#2193b0;color:white;transition:0.3s;
+}
+
+.print-menu{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+}
+
+.print-box{
+background:white;
+padding:20px;
+border-radius:10px;
+text-align:center;
+min-width:250px;
+}
+
+.print-box button{
+width:100%;
+margin:8px 0;
+padding:10px;
+cursor:pointer;
+}
+
+.print-btn{
+background:#0b7a75;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.tab-buttons button{
+  flex:1;
+  padding:14px;
+  font-weight:bold;
+  font-size:15px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  color:white;
+  position:relative;
+  overflow:hidden;
+  transition:0.3s ease;
+  letter-spacing:1px;
+  animation:blinkGlow 1.5s infinite;
+  box-shadow:0 0 10px rgba(255,255,255,0.3);
+}
+
+/* BUTTON COLORS */
+#btnData{
+  background:linear-gradient(45deg,#0066ff,#00bfff);
+}
+
+#btnSearch{
+  background:linear-gradient(45deg,#00a86b,#00d084);
+}
+
+#btnDashboard{
+  background:linear-gradient(45deg,#ff6600,#ff9800);
+}
+
+/* SHINE EFFECT */
+.tab-buttons button::before{
+  content:'';
+  position:absolute;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:rgba(255,255,255,0.18);
+  transform:rotate(45deg);
+  animation:shine 3s linear infinite;
+}
+
+/* HOVER EFFECT */
+.tab-buttons button:hover{
+  transform:translateY(-3px) scale(1.03);
+  box-shadow:0 0 20px rgba(255,255,255,0.6);
+}
+
+/* ACTIVE BUTTON */
+.tab-buttons button.active{
+  border:2px solid white;
+  box-shadow:0 0 25px white;
+}
+
+/* BLINK ANIMATION */
+@keyframes blinkGlow{
+  0%,100%{
+    opacity:1;
+    filter:brightness(1);
+  }
+  50%{
+    opacity:0.82;
+    filter:brightness(1.3);
+  }
+}
+
+/* MOVING SHINE */
+@keyframes shine{
+  0%{
+    transform:translateX(-100%) rotate(45deg);
+  }
+  100%{
+    transform:translateX(100%) rotate(45deg);
+  }
+}
+
+/* HEADER */
+.header-box{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+/* LOGO */
+.logo{
+
+  width:70px;
+  height:70px;
+
+  border-radius:50% !important;
+
+  object-fit:cover;
+
+  border:2px solid white;
+
+  background:white;
+
+  box-shadow:
+    inset -1px -1px #404040,
+    inset 1px 1px #ffffff,
+    0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* TITLE */
+.main-title{
+  font-size:34px;
+  font-weight:900;
+  color:black;
+  text-align:center;
+  letter-spacing:2px;
+
+  /* BLACK OUTLINE */
+  -webkit-text-stroke: 1px black;
+
+  /* EXTRA OUTLINE SUPPORT */
+  text-shadow:
+    -.5px -.5px 0 white,
+     .5px -.5px 0 white,
+    -.5px  .5px 0 white,
+     .5px  .5px 0 white,
+     0 0 10px white,
+     0 0 20px white,
+     0 0 40px white;
+
+  animation:titleBlink 1.5s infinite;
+}
+
+/* TITLE BLINK */
+@keyframes titleBlink{
+  0%,100%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  50%{
+    opacity:0.8;
+    transform:scale(1.03);
+  }
+}
+
+/* LOGO GLOW */
+@keyframes logoPulse{
+  0%,100%{
+    transform:scale(1);
+    box-shadow:
+      0 0 10px #fff,
+      0 0 20px #00bfff,
+      0 0 35px #00bfff;
+  }
+
+  50%{
+    transform:scale(1.05);
+    box-shadow:
+      0 0 20px #fff,
+      0 0 35px #00e5ff,
+      0 0 55px #00bfff;
+  }
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+  .main-title{
+    font-size:24px;
+  }
+
+  .logo{
+    width:70px;
+    height:70px;
+  }
+
+}
+.stat-card{
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* when clicked or tapped */
+.stat-card:active{
+  transform: scale(0.92);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+
+
+.tab-buttons button.active{background:#ff9800;}
+section{display:none;}
+.show{display:block;}
+form{display:flex;flex-direction:column;background-color:#eeeeee;padding:10px;border-radius:15px;border:2px solid #8d8d8d;}
+label{margin:6px;font-weight:bold;}
+input, select{padding:10px 15px;margin-bottom:5px;border-radius:6px;border:2px solid #777;text-transform:capitalize;}
+input:focus, select:focus{border-color:#2193b0;outline:none;box-shadow:0 0 4px rgba(33,147,176,0.4);}
+
+button.submit-btn{background-color:#04a204;color:white;font-size:15px;font-weight:bold;padding:10px;border-radius:6px;cursor:pointer;margin-top:10px;border:none;}
+@keyframes submitPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.submit-btn:active{
+  animation: submitPop 0.25s ease;
+  box-shadow: 0 0 20px #04a204;
+}
+button.submit-btn:hover{background-color:#058605;}
+.success-message{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%);
+  background:#28a745;color:white;padding:14px 25px;border-radius:8px;
+  font-weight:bold;display:none;animation:fadeIn 0.4s;z-index:999;
+}
+@keyframes fadeIn{from{opacity:0;transform:translate(-50%,-10px);}to{opacity:1;transform:translate(-50%,0);}}
+.dashboard-section{margin-top:20px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:15px;}
+.stat-card{background:#2193b0;color:white;padding:15px;border-radius:8px;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+.stat-card h3{margin:0;font-size:12px;font-weight:normal;}
+.stat-card p{margin:5px 0 0;font-size:18px;font-weight:bold;}
+.resident-table{width:100%;border-collapse:collapse;margin-top:10px;}
+.resident-table th, .resident-table td{border:1px solid #ccc;padding:6px;text-align:center;}
+.resident-table th{background:#2193b0;color:white;}
+.edit-btn{background:#ff9800;color:white;border:none;border-radius:5px;padding:4px 8px;cursor:pointer;}
+.edit-btn:hover{background:#e68900;}
+
+/* =========================
+   REAL WINDOWS XP CLASSIC BUTTONS
+========================= */
+
+.tab-buttons{
+  gap:4px;
+}
+
+/* ALL BUTTONS */
+.tab-buttons button,
+.submit-btn,
+.print-btn,
+.edit-btn,
+.print-box button{
+
+  background:#d4d0c8 !important;
+
+  color:#000 !important;
+
+  font-family:Tahoma, sans-serif !important;
+
+  font-size:13px;
+
+  font-weight:normal !important;
+
+  border:none !important;
+
+  border-radius:0px !important;
+
+  padding:6px 14px !important;
+
+  min-height:30px;
+
+  text-shadow:none !important;
+
+  letter-spacing:0px !important;
+
+  animation:none !important;
+
+  transition:none !important;
+
+  position:relative;
+
+  box-shadow:
+    inset -1px -1px #000000,
+    inset 1px 1px #ffffff,
+    inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf !important;
+}
+
+/* BUTTON HOVER */
+.tab-buttons button:hover,
+.submit-btn:hover,
+.print-btn:hover,
+.edit-btn:hover,
+.print-box button:hover{
+
+  background:#e5e2da !important;
+
+  transform:none !important;
+}
+
+/* BUTTON PRESS EFFECT */
+.tab-buttons button:active,
+.submit-btn:active,
+.print-btn:active,
+.edit-btn:active,
+.print-box button:active{
+
+  padding-top:7px !important;
+  padding-left:15px !important;
+
+  box-shadow:
+    inset 1px 1px #000000,
+    inset -1px -1px #ffffff,
+    inset 2px 2px #808080,
+    inset -2px -2px #dfdfdf !important;
+}
+
+/* ACTIVE TAB */
+.tab-buttons button.active{
+
+  background:#c0c0c0 !important;
+
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #ffffff,
+    inset 2px 2px #404040,
+    inset -2px -2px #dfdfdf !important;
+}
+
+/* INPUTS */
+input,
+select{
+
+  height:28px;
+
+  padding:3px 6px;
+
+  font-size:13px;
+
+  border:none !important;
+
+  background:white;
+
+  box-shadow:
+    inset 1px 1px #404040,
+    inset -1px -1px #ffffff,
+    inset 2px 2px #808080 !important;
+}
+
+/* WINDOW STYLE TITLE BAR */
+.header-box{
+
+  border-radius:0px !important;
+
+  background:
+    linear-gradient(to right,
+      #0a246a 0%,
+      #3a6ea5 40%,
+      #6fa1d2 100%) !important;
+
+  min-height:40px;
+
+  display:flex;
+  align-items:center;
+
+  box-shadow:
+    inset -1px -1px #404040,
+    inset 1px 1px #ffffff !important;
+}
+
+/* MAIN WINDOWS */
+form,
+.stat-card,
+#residentBody > div,
+.print-box{
+
+  border-radius:0px !important;
+
+  border:none !important;
+
+  background:#d4d0c8 !important;
+
+  box-shadow:
+    inset -1px -1px #000000,
+    inset 1px 1px #ffffff,
+    inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf !important;
+}
+
+/* CLASSIC WINDOW LOOK */
+.container{
+
+  border-radius:0px !important;
+
+  padding:8px;
+
+  background:#d4d0c8;
+
+  box-shadow:
+    inset -1px -1px #000000,
+    inset 1px 1px #ffffff,
+    inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf !important;
+}
+
+/* DASHBOARD BOX FONT COLOR */
+.stat-card{
+  color:#821803 !important;
+}
+
+.stat-card h3,
+.stat-card p{
+  color:#821803 !important;
+}
+
+/* =========================
+   WINDOWS XP CLASSIC FILTER BOX
+========================= */
+
+.window-card{
+  background:#ece9d8;
+  border:2px solid #7f7f7f;
+  box-shadow:
+    inset 1px 1px #ffffff,
+    inset -1px -1px #404040;
+  margin-bottom:18px;
+  overflow:hidden;
+  border-radius:0 !important;
+}
+
+/* TOP TITLE BAR */
+/* TOP TITLE BAR */
+.window-card-header{
+
+  background:
+    linear-gradient(to bottom,
+      #d6d6d6 0%,
+      #c7c7c7 45%,
+      #b8b8b8 100%);
+
+  border-bottom:2px solid #8a8a8a;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:6px;
+
+  padding:0 6px;
+}
+/* NAME TEXT */
+.window-card-title{
+
+  font-family: Arial, sans-serif;
+
+  font-size:14px;
+
+  font-weight:bold;
+
+  color:white;
+
+  flex:none;
+
+  width:auto;
+
+  white-space:normal;
+
+  word-break:break-word;
+
+  overflow:visible;
+
+  text-overflow:unset;
+
+  line-height:1.3;
+
+  padding-right:5px;
+
+  letter-spacing:0;
+
+  text-transform:none;
+
+  text-shadow:
+    -1px -1px 0 #6d6d6d,
+     1px -1px 0 #6d6d6d,
+    -1px  1px 0 #6d6d6d,
+     1px  1px 0 #6d6d6d;
+}
+
+/* BUTTON AREA */
+.window-card-controls{
+  display:flex;
+  gap:3px;
+  align-items:center;
+}
+
+/* XP BUTTONS */
+.win-mini-btn{
+  width:34px;
+  height:30px;
+
+  background:#ece9d8;
+
+  border-top:2px solid #ffffff;
+  border-left:2px solid #ffffff;
+  border-right:2px solid #4d4d4d;
+  border-bottom:2px solid #4d4d4d;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:20px;
+  font-weight:bold;
+  font-family:Tahoma,sans-serif;
+  color:black;
+
+  box-sizing:border-box;
+}
+
+/* CONTENT AREA */
+.window-card-content{
+  background:#ffffff !important;
+
+  min-height:280px;
+
+  padding:18px;
+
+  font-family:Tahoma,sans-serif;
+  color:black;
+
+  border:none !important;
+
+  box-shadow:none !important;
+}
+
+.window-card-content div{
+  border:none !important;
+  box-shadow:none !important;
+  background:transparent !important;
+}
+
+/* BIG LABEL */
+.details-label{
+  font-size:52px;
+  font-weight:900;
+  color:black;
+  line-height:1;
+  margin-bottom:25px;
+}
+
+/* DETAILS */
+.window-card-content div{
+  font-size:16px;
+  margin-bottom:8px;
+}
+
+/* =========================
+   DASHBOARD POPUP BUBBLE WINDOW
+========================= */
+
+.popup-overlay{
+  display:none;
+
+  position:fixed;
+
+  top:0;
+  left:0;
+
+  width:100%;
+  height:100%;
+
+  background:rgba(0,0,0,0.45);
+
+  z-index:9999;
+
+  justify-content:center;
+
+  align-items:flex-end;
+
+  padding:0;
+}
+/* BUBBLE WINDOW */
+.popup-window{
+
+  width:95vw;
+
+  max-width:520px;
+
+  height:92vh;
+
+  margin-right:0;
+
+  background:#ece9d8;
+
+  border-radius:22px 22px 0 0;
+
+  overflow:hidden;
+
+  border:3px solid #8a8a8a;
+
+  box-shadow:
+    0 0 25px rgba(0,0,0,0.5),
+    inset 1px 1px #ffffff,
+    inset -1px -1px #404040;
+
+  display:flex;
+  flex-direction:column;
+
+  animation:popupSlide 0.25s ease;
+}
+
+
+/* TOP BAR */
+.popup-header{
+
+  background:linear-gradient(to right,#0a246a,#3a6ea5,#6fa1d2);
+
+  color:white;
+
+  padding:12px;
+
+  font-weight:bold;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  font-size:15px;
+}
+
+/* CLOSE BUTTON */
+.popup-close{
+
+  width:28px;
+  height:28px;
+
+  border:none;
+
+  background:#d4d0c8;
+
+  cursor:pointer;
+
+  font-weight:bold;
+
+  font-size:16px;
+
+  box-shadow:
+    inset -1px -1px #000000,
+    inset 1px 1px #ffffff,
+    inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf;
+}
+
+/* BODY WITH SCROLLBAR */
+.popup-body{
+
+  flex:1;
+
+  overflow-y:auto;
+
+  padding:14px;
+
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+
+  background:white;
+}
+
+/* SCROLLBAR */
+.popup-body::-webkit-scrollbar{
+  width:14px;
+}
+
+.popup-body::-webkit-scrollbar-track{
+  background:#d4d0c8;
+}
+
+.popup-body::-webkit-scrollbar-thumb{
+  background:#8a8a8a;
+  border:2px solid #d4d0c8;
+}
+
+.popup-body{
+  flex:1;
+
+  overflow-y:auto;
+
+  overflow-x:hidden;
+
+  padding:14px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:14px;
+
+  align-items:stretch;
+}
+
+/* EACH RESULT FIXED SIZE */
+.popup-body .window-card{
+
+  width:100%;
+
+  flex-shrink:0;
+
+  min-height:auto;
+}
+
+/* ANIMATION */
+@keyframes popupSlide{
+  from{
+    transform:translateX(100%);
+    opacity:0;
+  }
+  to{
+    transform:translateX(0);
+    opacity:1;
+  }
+}
+
+/* ONLY CHILD DETAILS POPUP VALUES GREEN */
+#familyProfilePopup .window-card-content div {
+  color: green !important;
+}
+
+/* KEEP LABELS (b tags) BLACK */
+#familyProfilePopup .window-card-content b {
+  color: black !important;
+}
+
+.envelope{
+  text-align:center;
+  animation: floatUpDown 1s infinite ease-in-out;
+}
+
+.envelope-body{
+  font-size:22px;
+  background:white;
+  padding:18px 25px;
+  border-radius:10px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.3);
+  font-weight:bold;
+}
+
+.envelope-top{
+  width:0;
+  height:0;
+  margin:0 auto;
+  border-left:40px solid transparent;
+  border-right:40px solid transparent;
+  border-bottom:30px solid #2193b0;
+}
+
+@keyframes floatUpDown{
+  0%{ transform:translateY(0); }
+  50%{ transform:translateY(-15px); }
+  100%{ transform:translateY(0); }
+}
+
+/* fly away effect */
+.envelope.fly{
+  animation: flyAway 0.6s forwards ease-in;
+}
+
+@keyframes flyAway{
+  0%{ transform:translateY(0) scale(1); opacity:1; }
+  100%{ transform:translateY(-200px) scale(0.6); opacity:0; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header-box">
+
+  <img src="https://i.postimg.cc/5tjGgpNX/Messenger-creation-B73CB663-3918-4A58-8534-DB52EF7B5BFE.jpg" class="logo">
+
+  <h1 class="main-title">
+     BRGY. AIRPORT DATA 
+  </h1>
+
+</div>
+<div class="tab-buttons">
+  <button id="btnData" class="active" onclick="showSection('dataEntry')">Data Entry</button>
+  <button id="btnSearch" onclick="showSection('searchFilter')">Search / Filter</button>
+  <button id="btnDashboard" onclick="showSection('dashboard')">Dashboard</button>
+</div>
+
+<div style="display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap;">
+
+  <button onclick="openPrintMenu()" class="print-btn">
+    PRINT
+  </button>
+
+  <button onclick="syncAllAgesToSheet()" class="print-btn">
+    UPDATE ALL AGES
+  </button>
+  
+  <button onclick="clearForm()" class="print-btn">
+  CLEAR FORM
+</button>
+
+</div>
+
+<div class="success-message" id="successMsg">Form submitted successfully!</div>
+
+<div class="success-message" id="ageSyncMsg">
+  Ages updated successfully!
+</div>
+
+
+<!-- DATA ENTRY -->
+<section id="dataEntry" class="show">
+<form id="residentForm">
+<label>First Name*</label>
+<input type="text" name="First Name" required>
+<label>Middle Name*</label>
+<input type="text" name="Middle Name" required>
+<label>Last Name*</label>
+<input type="text" name="Last Name" required>
+<label>Date of Birth*</label>
+
+<input type="date" name="Date of Birth" id="dob" required onchange="calculateAge()">
+<label>Age</label>
+<input type="text" name="Age" id="age" placeholder="Age auto compute" readonly>
+<label>Citizenship</label>
+<input type="text" name="Citizenship">
+<label>Address</label>
+<select name="Address" required>
+<option value="">Select Address</option>
+<option>Purok 1</option>
+<option>Purok 2</option>
+<option>Purok 3</option>
+<option>Purok 4</option>
+<option>Purok 5</option>
+<option>Purok 6</option>
+<option>Purok 7</option>
+</select>
+<label>Email Address</label>
+<input type="text" name="Email Address">
+<label>Occupation</label>
+<select name="Occupation" required>
+<option value="">Select Occupation</option>
+<option>Employed</option>
+<option>Unemployed</option>
+<option>Self Employed</option>
+<option>OFW</option>
+<option>On Call</option>
+<option>Student</option>
+<option>N/A</option>
+</select>
+<label>Contact Number</label>
+<input type="text" name="Contact Number">
+<label>Educational Status</label>
+<select name="Educational Status" required>
+<option value="">Select</option>
+<option>Elementary</option>
+<option>Jr High School</option>
+<option>Sr High School</option>
+<option>College Undergrad</option>
+<option>Associate's 2yr Course</option>
+<option>College Graduate</option>
+<option>Vocational Course</option>
+<option>N/A</option>
+
+</select>
+<label>Birth Place</label>
+<input type="text" name="Birth Place">
+<label>Gender</label>
+<select name="Gender" required>
+<option value="">Select</option>
+<option>Male</option>
+<option>Female</option>
+</select>
+<label>Civil Status</label>
+<select name="Civil Status" required>
+<option value="">Select</option>
+<option>Single</option>
+<option>Married</option>
+<option>Widow</option>
+<option>Separated</option>
+</select>
+<label>Remarks</label>
+<input type="text" name="Remarks">
+
+<!-- FAMILY PROFILE POPUP (0-5 YEARS OLD ONLY) -->
+
+<div id="childPopup"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+z-index:99999;
+justify-content:center;
+align-items:center;
+padding:10px;
+">
+
+<div style="
+background:#ece9d8;
+width:100%;
+max-width:500px;
+max-height:90vh;
+overflow:auto;
+border:3px solid #7f7f7f;
+box-shadow:
+inset 1px 1px #ffffff,
+inset -1px -1px #404040;
+">
+
+<!-- TITLE BAR -->
+<div style="
+background:linear-gradient(to right,#0a246a,#3a6ea5,#6fa1d2);
+color:white;
+padding:10px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>FAMILY PROFILE INFORMATION</span>
+
+<button type="button"
+onclick="finishChildPopup()"
+
+style="
+width:28px;
+height:28px;
+font-weight:bold;
+cursor:pointer;
+">
+❌
+</button>
+
+</div>
+
+<!-- CONTENT -->
+<div style="padding:15px;display:flex;flex-direction:column;gap:10px;">
+
+<label>Mother Name</label>
+<input type="text" name="Mother Name">
+
+<label>Father Name</label>
+<input type="text" name="Father Name">
+
+<label>Child Weight (kg)</label>
+<input type="number" name="Weight" step="0.1" placeholder="Enter weight">
+
+<label>Child Height (cm)</label>
+<input type="number" name="Height" step="0.1" placeholder="Enter height">
+
+<b>Check if</b>
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="FamilyOption"
+onclick="
+document.getElementsByName('Mother Pregnant')[0].value='✔';
+document.getElementsByName('Couple Practice Family Planning')[0].value='';
+
+document.getElementById('prenatalCareBox').style.display='block';
+">
+Mother Pregnant
+</label>
+
+<input type="hidden" name="Mother Pregnant">
+
+<!-- PRENATAL CARE CHECKBOXES -->
+<div id="prenatalCareBox"
+style="
+display:none;
+margin-left:25px;
+padding:10px;
+border:1px solid #999;
+background:#f5f5f5;
+">
+
+<b>Prenatal Care</b>
+
+<!-- 1st Tri -->
+<label style="display:flex;gap:10px;align-items:center;margin-top:8px;">
+<input type="checkbox"
+name="1st Tri"
+value="✔"
+onchange="
+this.value=this.checked ? '✔' : '';
+">
+1st Tri
+</label>
+
+<!-- 2nd Tri -->
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="checkbox"
+name="2nd Tri"
+value="✔"
+onchange="
+this.value=this.checked ? '✔' : '';
+">
+2nd Tri
+</label>
+
+<!-- 3rd Tri -->
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="checkbox"
+name="3rd Tri"
+value="✔"
+onchange="
+this.value=this.checked ? '✔' : '';
+">
+3rd Tri
+</label>
+
+</div>
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="FamilyOption"
+onclick="
+document.getElementsByName('Mother Pregnant')[0].value='';
+document.getElementsByName('Couple Practice Family Planning')[0].value='✔';
+
+document.getElementById('prenatalCareBox').style.display='none';
+
+document.getElementsByName('1st Tri')[0].value='';
+document.getElementsByName('2nd Tri')[0].value='';
+document.getElementsByName('3rd Tri')[0].value='';
+">
+Couple Practice Family Planning
+</label>
+
+<input type="hidden" name="Couple Practice Family Planning">
+
+<b>Feeding Type</b>
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="Feeding Type"
+onclick="
+document.getElementsByName('EBF')[0].value='✔';
+document.getElementsByName('Mixed Feeding')[0].value='';
+document.getElementsByName('Bottle Fed')[0].value='';
+">
+EBF
+</label>
+
+<input type="hidden" name="EBF">
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="Feeding Type"
+onclick="
+document.getElementsByName('EBF')[0].value='';
+document.getElementsByName('Mixed Feeding')[0].value='✔';
+document.getElementsByName('Bottle Fed')[0].value='';
+">
+Mixed Feeding
+</label>
+
+<input type="hidden" name="Mixed Feeding">
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="Feeding Type"
+onclick="
+document.getElementsByName('EBF')[0].value='';
+document.getElementsByName('Mixed Feeding')[0].value='';
+document.getElementsByName('Bottle Fed')[0].value='✔';
+">
+Bottle Fed
+</label>
+
+<input type="hidden" name="Bottle Fed">
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="Feeding Type"
+onclick="
+document.getElementsByName('EBF')[0].value='';
+document.getElementsByName('Mixed Feeding')[0].value='';
+document.getElementsByName('Bottle Fed')[0].value='';
+document.getElementById('othersFeedBox').style.display='block';
+">
+Others
+</label>
+
+<div id="othersFeedBox" style="display:none;margin-left:25px;">
+
+<input type="text"
+name="Others"
+placeholder="Specify others feeding">
+
+</div>
+
+<hr>
+
+<label>Toilet Type</label>
+<input type="text" name="Toilet Type">
+
+<label>Water Source</label>
+<input type="text" name="Water Source">
+
+<label>Food Production Activity</label>
+<input type="text" name="Food Production Activity">
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="HH Choice"
+onclick="
+document.getElementsByName('HH Using Iodized Salt')[0].value='✔';
+document.getElementsByName('HH Using IFR')[0].value='';
+">
+HH Using Iodized Salt
+</label>
+
+<input type="hidden" name="HH Using Iodized Salt">
+
+<label style="display:flex;gap:10px;align-items:center;">
+<input type="radio" name="HH Choice"
+onclick="
+document.getElementsByName('HH Using Iodized Salt')[0].value='';
+document.getElementsByName('HH Using IFR')[0].value='✔';
+">
+HH Using IFR
+</label>
+
+<input type="hidden" name="HH Using IFR">
+
+<div style="text-align:center;margin-top:15px;">
+
+<button type="button"
+onclick="finishChildPopup()"
+style="
+padding:10px 30px;
+font-weight:bold;
+cursor:pointer;
+background:#d4d0c8;
+border:none;
+
+box-shadow:
+inset -1px -1px #000000,
+inset 1px 1px #ffffff,
+inset -2px -2px #808080,
+inset 2px 2px #dfdfdf;
+">
+DONE
+</button>
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+
+<div style="display:flex;justify-content:center;margin-top:10px;">
+
+<button
+type="button"
+class="submit-btn"
+onclick="openContinuePopup()"
+style="
+width:160px;
+max-width:70%;
+">
+Continue
+</button>
+
+</div>
+
+By:4r13lr0ch3@gmail.com
+
+</form>
+</section>
+
+<!-- SEARCH / FILTER -->
+<section id="searchFilter">
+<input type="text" id="searchInput" placeholder="Search by First, Middle or Last Name" onkeyup="filterTable()">
+
+<div id="residentBody"
+     style="
+     display:flex;
+     flex-direction:column;
+     gap:12px;
+     margin-top:15px;">
+</div>
+
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+
+  <div class="dashboard-section stats-grid" id="statsGrid"></div>
+
+  <div id="filterResult" style="display:none;margin-top:15px;">
+
+    <h3 id="filterTitle"
+        style="text-align:center;margin-bottom:15px;background:#2193b0;color:white;padding:10px;border-radius:10px;">
+    </h3>
+
+    <div id="filterBody"
+         style="display:flex;flex-direction:column;gap:12px;">
+    </div>
+
+  </div>
+
+</section>
+
+<div id="filterResult" style="display:none;margin-top:15px;">
+
+  <h3 id="filterTitle"
+      style="
+      text-align:center;
+      margin-bottom:15px;
+      background:#2193b0;
+      color:white;
+      padding:10px;
+      border-radius:10px;">
+  </h3>
+
+  <div id="filterBody"
+       style="
+       display:flex;
+       flex-direction:column;
+       gap:12px;">
+  </div>
+
+</div>
+
+
+
+<!-- PRINT MENU POPUP -->
+<div id="printMenu" class="print-menu">
+  <div class="print-box">
+
+    <h3>Select Form</h3>
+
+    <button onclick="printBESO()">BESO DATA</button>
+
+    <br>
+    <button onclick="closePrintMenu()">Cancel</button>
+
+  </div>
+</div>
+
+
+<!-- DASHBOARD POPUP -->
+<div id="popupOverlay" class="popup-overlay">
+
+  <div class="popup-window">
+
+    <div class="popup-header">
+
+      <span id="popupTitle">Results</span>
+
+      <button class="popup-close" onclick="closePopup()">❌</button>
+
+    </div>
+
+    <div id="popupBody" class="popup-body"></div>
+
+  </div>
+
+</div>
+
+<div id="familyProfilePopup" class="popup-overlay" style="display:none;">
+  <div class="popup-window">
+
+    <div class="popup-header">
+      <span>Family Profile Details</span>
+      <button class="popup-close" onclick="closeFamilyProfile()">X</button>
+    </div>
+
+    <div id="childDetailsBody" class="popup-body"></div>
+
+  </div>
+</div>
+
+ 
+
+<!-- CONTINUE POPUP -->
+<div id="continuePopup"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+z-index:999999;
+justify-content:center;
+align-items:center;
+padding:15px;
+">
+
+<div style="
+background:#ece9d8;
+width:100%;
+max-width:320px;
+border:3px solid #7f7f7f;
+box-shadow:
+inset 1px 1px #ffffff,
+inset -1px -1px #404040;
+border-radius:18px;
+overflow:hidden;
+animation:popupSlide 0.2s ease;
+">
+
+<div style="
+background:linear-gradient(to right,#0a246a,#3a6ea5,#6fa1d2);
+color:white;
+padding:10px 12px;
+font-weight:bold;
+font-size:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>Additional Options</span>
+
+<button
+type="button"
+onclick="closeContinuePopup()"
+style="
+width:28px;
+height:28px;
+font-weight:bold;
+cursor:pointer;
+background:#d4d0c8;
+border:none;
+font-size:16px;
+
+box-shadow:
+inset -1px -1px #000000,
+inset 1px 1px #ffffff,
+inset -2px -2px #808080,
+inset 2px 2px #dfdfdf;
+">
+❌
+</button>
+
+</div>
+<div style="
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:15px;
+">
+
+<button type="button"
+class="submit-btn"
+onclick="openFamilyProfilePopupOnly()">
+Family Profile
+</button>
+
+<button type="button"
+class="submit-btn"
+onclick="submitResidentForm()">
+Submit
+</button>
+
+
+</div>
+</div>
+</div>
+
+<!-- DONE OPTIONS POPUP -->
+<div id="donePopup"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+z-index:999999;
+justify-content:center;
+align-items:center;
+padding:15px;
+">
+
+<div style="
+background:#ece9d8;
+width:100%;
+max-width:320px;
+border:3px solid #7f7f7f;
+box-shadow:
+inset 1px 1px #ffffff,
+inset -1px -1px #404040;
+border-radius:18px;
+overflow:hidden;
+">
+
+<div style="
+background:linear-gradient(to right,#0a246a,#3a6ea5,#6fa1d2);
+color:white;
+padding:10px 12px;
+font-weight:bold;
+font-size:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span>Select Option</span>
+
+<button
+type="button"
+onclick="closeDonePopup()"
+style="
+width:28px;
+height:28px;
+font-weight:bold;
+cursor:pointer;
+background:#d4d0c8;
+border:none;
+font-size:16px;
+
+box-shadow:
+inset -1px -1px #000000,
+inset 1px 1px #ffffff,
+inset -2px -2px #808080,
+inset 2px 2px #dfdfdf;
+">
+❌
+</button>
+
+</div>
+<div style="
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:15px;
+">
+
+<button type="button"
+class="submit-btn"
+onclick="submitResidentForm()">
+Submit
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- ENVELOPE SENDING ANIMATION -->
+<div id="envelopeOverlay" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.35);
+z-index:9999999;
+justify-content:center;
+align-items:center;
+">
+
+  <div class="envelope">
+    <div class="envelope-top"></div>
+    <div class="envelope-body">✉️ Sending...</div>
+  </div>
+
+</div>
+
+<script>
+
+function clearForm(){
+
+  // reset all inputs in Data Entry form
+  document.getElementById('residentForm').reset();
+
+  // also clear computed age field (if needed)
+  document.getElementById('age').value = '';
+
+  // optional: clear DOB too (reset already does it, but safe)
+  document.getElementById('dob').value = '';
+
+  // show message
+  document.getElementById('successMsg').style.display = 'block';
+  document.getElementById('successMsg').innerText = 'Form cleared!';
+
+  setTimeout(() => {
+    document.getElementById('successMsg').style.display = 'none';
+    document.getElementById('successMsg').innerText = 'Form submitted successfully!';
+  }, 1500);
+}
+
+let allResidents = [];
+
+// 👇 ADD IT RIGHT HERE
+function syncAllAgesToSheet() {
+
+  document.getElementById("ageSyncMsg").style.display = "block";
+  document.getElementById("ageSyncMsg").innerText = "Updating ages...";
+  
+  const updates = allResidents.map(r => {
+
+    if (!r['Date of Birth']) return null;
+
+    const birth = new Date(r['Date of Birth']);
+    const today = new Date();
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    const d = today.getDate() - birth.getDate();
+
+    if (m < 0 || (m === 0 && d < 0)) {
+      age--;
+    }
+
+    return {
+      row: r.Row,
+      age: age
+    };
+  }).filter(x => x !== null);
+
+  fetch(scriptURL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "updateAllAges",
+      data: updates
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+
+    console.log(res);
+
+    document.getElementById("ageSyncMsg").innerText = "✅ All ages updated!";
+    setTimeout(() => {
+      document.getElementById("ageSyncMsg").style.display = "none";
+    }, 2000);
+
+    fetchResidents();
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("ageSyncMsg").innerText = "❌ Update failed";
+  });
+}
+
+function openPrintMenu(){
+document.getElementById("printMenu").style.display="flex";
+}
+
+function closePrintMenu(){
+document.getElementById("printMenu").style.display="none";
+}
+
+function printBESO(){
+  const url = "https://docs.google.com/spreadsheets/d/1NCylDHyAmexbnmVX1TKBJwiSVOm9V_V1/export?format=pdf"+
+              "&gid=51192665"+
+              "&range=D1:M100"+     // make sure this covers all your data
+              "&portrait=false"+     // landscape
+              "&fitw=true"+          // fit to page width
+              "&sheetnames=false"+
+              "&printtitle=false"+
+              "&pagenumbers=false"+
+              "&gridlines=false"+
+              "&size=9";             // F4 paper
+  window.open(url,"_blank");
+}
+
+// Auto capitalize inputs before saving
+function capitalizeWords(str){
+  return str.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+}
+
+document.querySelectorAll('#residentForm input[type="text"]').forEach(input=>{
+  input.addEventListener('input', function(){
+    this.value = capitalizeWords(this.value);
+  });
+});
+
+// Show sections
+function showSection(id){
+
+  document.querySelectorAll('section').forEach(s => s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+
+  document.querySelectorAll('.tab-buttons button').forEach(b => b.classList.remove('active'));
+
+  if(id==='dataEntry') {
+    document.getElementById('btnData').classList.add('active');
+    document.getElementById('filterResult').style.display = 'none';
+  }
+
+  if(id==='searchFilter') {
+    document.getElementById('btnSearch').classList.add('active');
+    document.getElementById('filterResult').style.display = 'none';
+  }
+
+  if(id==='dashboard') {
+    document.getElementById('btnDashboard').classList.add('active');
+  }
+}
+
+// Auto compute age with months
+function calculateAge(){
+  const dob = document.getElementById('dob').value;
+  if(!dob) return;
+
+  const birth = new Date(dob);
+  const today = new Date();
+
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+  let days = today.getDate() - birth.getDate();
+
+  // Adjust if days are negative
+  if (days < 0) {
+    months--;
+  }
+
+  // Adjust if months are negative
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  document.getElementById('age').value = years + " years, " + months + " months";
+}
+
+// Google Sheet Web App URL
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwkaF1fwHozqatv6Xu3gpRcXyqSGuhj2IesWeiLQkrUjTnoUgi1G89jrKabUI26SjsZ-Q/exec';
+
+// Submit form
+document.getElementById('residentForm').addEventListener('submit', e => {
+
+  e.preventDefault();
+
+  const form = e.target;
+
+  const dob = document.getElementById('dob').value;
+
+  if(!dob) return;
+
+  const birth = new Date(dob);
+  const today = new Date();
+
+  let age = today.getFullYear() - birth.getFullYear();
+
+  const m = today.getMonth() - birth.getMonth();
+  const d = today.getDate() - birth.getDate();
+
+  if(m < 0 || (m === 0 && d < 0)){
+    age--;
+  }
+
+  // SHOW FAMILY PROFILE POPUP FIRST
+  if(age >= 0 && age <= 5){
+
+    document.getElementById('childPopup').style.display = 'flex';
+
+    // SAVE TEMPORARY
+    window.pendingSubmit = true;
+
+    return;
+  }
+
+  submitResidentForm();
+
+});
+
+function submitResidentForm(){
+
+  document.getElementById('donePopup').style.display = 'none';
+  closeContinuePopup();
+
+  // SHOW ENVELOPE
+  const envelope = document.getElementById('envelopeOverlay');
+
+  if(envelope){
+    envelope.style.display = 'flex';
+  }
+
+  const form = document.getElementById('residentForm');
+
+  const formData = new FormData(form);
+
+  fetch(scriptURL, {
+    method:'POST',
+    body:formData
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    console.log(data);
+
+    document.getElementById('successMsg').style.display='block';
+
+    setTimeout(()=>{
+      document.getElementById('successMsg').style.display='none';
+    },2000);
+
+    form.reset();
+
+    document.getElementById('age').value='';
+
+    fetchResidents();
+
+    // fly animation
+    if(envelope){
+
+      envelope.querySelector('.envelope').classList.add('fly');
+
+      setTimeout(()=>{
+
+        envelope.style.display='none';
+
+        envelope.querySelector('.envelope').classList.remove('fly');
+
+      },700);
+
+    }
+
+  })
+  .catch(err => {
+
+    console.error('Error!', err);
+
+    if(envelope){
+      envelope.style.display='none';
+    }
+
+  });  
+
+  }
+
+// SHOW POPUP FOR 0-5 YEARS OLD
+function checkChildPopup(){
+
+  const dob = document.getElementById('dob').value;
+
+  if(!dob) return;
+
+  const birth = new Date(dob);
+  const today = new Date();
+
+  let age = today.getFullYear() - birth.getFullYear();
+
+  const m = today.getMonth() - birth.getMonth();
+
+  const d = today.getDate() - birth.getDate();
+
+  if(m < 0 || (m === 0 && d < 0)){
+    age--;
+  }
+
+  // SHOW ONLY FOR 0-5 YEARS OLD
+  if(age >= 0 && age <= 5){
+
+    document.getElementById('childPopup').style.display = 'flex';
+
+  } else {
+
+    document.getElementById('childPopup').style.display = 'none';
+
+  }
+}
+
+// Fetch residents and populate table + dashboard
+function fetchResidents(){
+
+  fetch(scriptURL + '?action=read')
+
+    .then(res => res.json())
+
+    .then(data => {
+
+      allResidents = data || [];
+
+      populateTable(allResidents);
+
+      updateDashboard(allResidents);
+
+    })
+
+    .catch(err => {
+
+      console.error("Fetch failed:", err);
+
+      allResidents = [];
+
+    });
+
+}
+function openContinuePopup(){
+
+  const form = document.getElementById('residentForm');
+
+  // CHECK REQUIRED FIELDS
+  if(!form.checkValidity()){
+
+    form.reportValidity();
+
+    return;
+  }
+
+  document.getElementById('continuePopup').style.display = 'flex';
+}
+
+function closeContinuePopup(){
+
+  document.getElementById('continuePopup').style.display = 'none';
+
+}
+
+function closeChildPopup(){
+
+  document.getElementById('childPopup').style.display = 'none';
+
+}
+
+function openFamilyProfilePopupOnly(){
+
+  closeContinuePopup();
+
+  document.getElementById('childPopup').style.display = 'flex';
+}
+
+function finishChildPopup(){
+
+  // CLOSE CHILD POPUP
+  document.getElementById('childPopup').style.display = 'none';
+
+  // OPEN DONE OPTIONS
+  setTimeout(() => {
+
+    document.getElementById('donePopup').style.display = 'flex';
+
+  }, 100);
+
+}
+
+function closeDonePopup(){
+
+  document.getElementById('donePopup').style.display = 'none';
+
+}
+
+// Populate search table
+function populateTable(data){
+
+  const tbody = document.getElementById('residentBody');
+
+  tbody.innerHTML='';
+
+  data.forEach((r,i)=>{
+
+    const card = document.createElement('div');
+
+    card.style.background = '#ffffff';
+    card.style.border = '2px solid #2193b0';
+    card.style.borderRadius = '12px';
+    card.style.padding = '12px';
+    card.style.marginBottom = '12px';
+    card.style.boxShadow = '0 4px 10px rgba(0,0,0,0.15)';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.gap = '6px';
+
+    card.innerHTML = `
+
+      <div style="font-size:18px;font-weight:bold;color:blue;">
+        ${r['First Name']||''} ${r['Middle Name']||''} ${r['Last Name']||''}
+      </div>
+
+      <div><b>Age:</b> ${getAgeWithMonths(r['Date of Birth'])}</div>
+
+      <div><b>Date of Birth:</b> ${
+        r['Date of Birth']
+          ? new Date(r['Date of Birth']).toLocaleDateString('en-US')
+          : ''
+      }</div>
+
+      <div><b>Gender:</b> ${r['Gender']||''}</div>
+
+      <div><b>Civil Status:</b> ${r['Civil Status']||''}</div>
+
+      <div><b>Occupation:</b> ${r['Occupation']||''}</div>
+
+      <div><b>Address:</b> ${r['Address']||''}</div>
+
+      <div><b>Educational Status:</b> ${r['Educational Status']||''}</div>
+      
+      <div><b>Remarks:</b> <span style="color:red;font-weight:bold;">${r['Remarks'] || ''}</span></div>
+
+      <div style="
+  display:flex;
+  justify-content:flex-end;
+  margin-top:10px;
+">
+  <button class="edit-btn"
+    style="
+      padding:10px 16px;
+    "
+    onclick="editResident(${i})">
+    Edit
+  </button>
+</div>
+
+    `;
+
+    tbody.appendChild(card);
+
+  });
+
+}
+
+// Filter table
+function filterTable(){
+
+  const input = document.getElementById('searchInput').value.toUpperCase();
+
+  const cards = document.querySelectorAll('#residentBody > div');
+
+  cards.forEach(card => {
+
+    const text = card.innerText.toUpperCase();
+
+    if(text.includes(input)){
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+
+  });
+
+}
+
+// Edit resident
+function editResident(index){
+
+  fetch(scriptURL+'?action=read')
+  .then(res=>res.json())
+  .then(data=>{
+
+    const r = data[index];
+
+    const form = document.getElementById('residentForm');
+
+    // fill all fields
+    for(const key in r){
+
+      if(form[key]){
+
+        // FIX DATE INPUT
+        if(key === 'Date of Birth' && r[key]){
+
+          const d = new Date(r[key]);
+
+          const yyyy = d.getFullYear();
+
+          const mm = String(d.getMonth()+1).padStart(2,'0');
+
+          const dd = String(d.getDate()).padStart(2,'0');
+
+          form[key].value = `${yyyy}-${mm}-${dd}`;
+
+        } else {
+
+          form[key].value = r[key];
+
+        }
+
+      }
+
+    }
+
+    // recompute age display
+calculateAge();
+
+// RESTORE RADIO / CHECKBOX VALUES
+
+// Mother Pregnant / Family Planning
+if(r['Mother Pregnant'] === '✔'){
+
+  document.querySelectorAll('input[name="FamilyOption"]')[0].checked = true;
+
+} else if(r['Couple Practice Family Planning'] === '✔'){
+
+  document.querySelectorAll('input[name="FamilyOption"]')[1].checked = true;
+
+}
+
+// RESTORE TRI CHECKBOXES
+
+document.getElementsByName('1st Tri')[0].checked =
+  r['1st Tri'] === '✔';
+
+document.getElementsByName('2nd Tri')[0].checked =
+  r['2nd Tri'] === '✔';
+
+document.getElementsByName('3rd Tri')[0].checked =
+  r['3rd Tri'] === '✔';
+
+// SHOW PRENATAL BOX IF ANY TRI IS CHECKED
+if(
+  r['1st Tri'] === '✔' ||
+  r['2nd Tri'] === '✔' ||
+  r['3rd Tri'] === '✔'
+){
+  document.getElementById('prenatalCareBox').style.display = 'block';
+}
+
+// Feeding Type
+if(r['EBF'] === '✔'){
+
+  document.querySelectorAll('input[name="Feeding Type"]')[0].checked = true;
+
+}
+else if(r['Mixed Feeding'] === '✔'){
+
+  document.querySelectorAll('input[name="Feeding Type"]')[1].checked = true;
+
+}
+else if(r['Bottle Fed'] === '✔'){
+
+  document.querySelectorAll('input[name="Feeding Type"]')[2].checked = true;
+
+}
+else if(r['Others']){
+
+  document.querySelectorAll('input[name="Feeding Type"]')[3].checked = true;
+
+  document.getElementById('othersFeedBox').style.display = 'block';
+
+}
+
+// HH Choice
+if(r['HH Using Iodized Salt'] === '✔'){
+
+  document.querySelectorAll('input[name="HH Choice"]')[0].checked = true;
+
+}
+else if(r['HH Using IFR'] === '✔'){
+
+  document.querySelectorAll('input[name="HH Choice"]')[1].checked = true;
+
+}
+
+    // go back to data entry
+    showSection('dataEntry');
+
+  });
+
+}
+
+function getAgeFromDOB(dob){
+  if(!dob) return 0;
+
+  const birth = new Date(dob);
+  const today = new Date();
+
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  const d = today.getDate() - birth.getDate();
+
+  if (m < 0 || (m === 0 && d < 0)) {
+    age--;
+  }
+
+  return age;
+}
+
+function getAgeWithMonths(dob){
+  if(!dob) return '';
+
+  const birth = new Date(dob);
+  const today = new Date();
+
+  let years = today.getFullYear() - birth.getFullYear();
+  let months = today.getMonth() - birth.getMonth();
+  let days = today.getDate() - birth.getDate();
+
+  if (days < 0) {
+    months--;
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  // 👇 KEY FIX: show months for infants/toddlers
+  if (years === 0) {
+    return months + " months";
+  }
+
+  return years + " yrs";
+}
+
+// Update dashboard
+function updateDashboard(data){
+
+  const grid = document.getElementById('statsGrid');
+
+  let male=0,female=0,total=0;
+
+  let toddler=0,preschool=0,middlechildhood=0,teenager=0,infant=0,youth=0,youngAdult=0,primeAge=0,mature=0,senior=0;
+
+  let single=0,married=0,widow=0,separated=0;
+
+  let elementary=0,jrHigh=0,srHigh=0,collegeUnder=0,associate=0,collegeGrad=0,vocational=0;
+
+  let employed=0,unemployed=0,selfEmployed=0,ofw=0,onCall=0,student=0;
+
+  data.forEach(r=>{
+
+    total++;
+
+    // GENDER
+    if(r['Gender']==='Male') male++;
+    if(r['Gender']==='Female') female++;
+
+    // AGE CATEGORY
+   let age = getAgeFromDOB(r['Date of Birth']);
+
+    if(age === 0) infant++;
+else if(age >= 1 && age <= 2) toddler++;
+else if(age >= 3 && age <= 5) preschool++;
+else if(age >= 6 && age <= 11) middlechildhood++;
+else if(age >= 12 && age <= 17) teenager++;
+else if(age >= 18 && age <= 24) youth++;
+else if(age >= 25 && age <= 34) youngAdult++;
+else if(age >= 35 && age <= 44) primeAge++;
+else if(age >= 45 && age <= 54) mature++;
+else if(age >= 55 && age <= 65) senior++;
+
+    // CIVIL STATUS
+    if(r['Civil Status']==='Single') single++;
+    else if(r['Civil Status']==='Married') married++;
+    else if(r['Civil Status']==='Widow') widow++;
+    else if(r['Civil Status']==='Separated') separated++;
+
+    
+    // EDUCATION
+const edu = (r['Educational Status'] || '').toLowerCase();
+
+if(edu.includes('elementary')) elementary++;
+
+else if(edu.includes('jr')) jrHigh++;
+
+else if(edu.includes('sr')) srHigh++;
+
+else if(edu.includes('associate')) associate++;
+
+else if(edu.includes('graduate')) collegeGrad++;
+
+else if(edu.includes('under')) collegeUnder++;
+
+else if(edu.includes('vocational')) vocational++;
+
+    // EMPLOYMENT
+    const occ=r['Occupation'];
+
+    if(occ==='Employed') employed++;
+    else if(occ==='Unemployed') unemployed++;
+    else if(occ==='Self Employed') selfEmployed++;
+    else if(occ==='OFW') ofw++;
+    else if(occ==='On Call') onCall++;
+    else if(occ==='Student') student++;
+
+  });
+
+  grid.innerHTML='';
+
+  const stats=[
+
+    
+    {title:'MALE',value:male},
+    {title:'FEMALE',value:female},
+    {title:'TOTAL',value:total},
+    
+    {title:'INFANT (0-1)',value:infant},
+    {title:'TODDLER (1-2)',value:toddler},
+    {title:'PRESCHOOL (3-5)',value:preschool},
+    {title:'MIDDLE CHILDHOOD (6-11)',value:middlechildhood},
+    {title:'TEENAGER (12-17)',value:teenager},
+    {title:'YOUTH (18-24)',value:youth},
+    {title:'YOUNG ADULTS (25-34)',value:youngAdult},
+    {title:'PRIME WORKING AGE (35-44)',value:primeAge},
+    {title:'MATURE WORKER (45-54)',value:mature},
+    {title:'SENIOR / PRE-RETIREMENT (55-65)',value:senior},
+
+    {title:'SINGLE',value:single},
+    {title:'MARRIED',value:married},
+    {title:'WIDOW',value:widow},
+    {title:'SEPARATED',value:separated},
+
+    {title:'ELEMENTARY',value:elementary},
+    {title:'JR HIGH SCHOOL',value:jrHigh},
+    {title:'SR HIGH SCHOOL',value:srHigh},
+    {title:'COLLEGE UNDERGRAD',value:collegeUnder},
+    {title:'ASSOCIATE 2YRS',value:associate},
+    {title:'COLLEGE GRADUATE',value:collegeGrad},
+    {title:'VOCATIONAL COURSE',value:vocational},
+
+    {title:'EMPLOYED',value:employed},
+    {title:'UNEMPLOYED',value:unemployed},
+    {title:'SELF EMPLOYED',value:selfEmployed},
+    {title:'OFW',value:ofw},
+    {title:'ON CALL',value:onCall},
+    {title:'STUDENT',value:student}
+
+  ];
+
+  stats.forEach(s=>{
+    const div=document.createElement('div');
+    div.className='stat-card';
+    div.innerHTML=`<h3>${s.title}</h3><p>${s.value}</p>`;
+div.style.cursor = "pointer";
+div.onclick = () => filterByCategory(s.title);
+    grid.appendChild(div);
+  });
+
+}
+
+function filterByCategory(category){
+
+  const popup = document.getElementById('popupOverlay');
+  const body = document.getElementById('popupBody');
+  const title = document.getElementById('popupTitle');
+
+  popup.style.display = 'flex';
+
+  title.innerText = category;
+
+  body.innerHTML = '';
+
+  allResidents.forEach((r,i) => {
+
+    let match = false;
+
+    let age = getAgeFromDOB(r['Date of Birth']);
+
+    const gender = (r['Gender'] || '').toUpperCase();
+    const civil = (r['Civil Status'] || '').toUpperCase();
+    const edu = (r['Educational Status'] || '').toLowerCase();
+    const occ = (r['Occupation'] || '').toUpperCase();
+
+    // AGE GROUPS
+    if(category.includes('INFANT') && age === 0) match=true;
+    else if(category.includes('TODDLER') && age >= 1 && age <= 2) match=true;
+    else if(category.includes('PRESCHOOL') && age >= 3 && age <= 5) match=true;
+    else if(category.includes('MIDDLE CHILDHOOD') && age >= 6 && age <= 11) match=true;
+    else if(category.includes('TEENAGER') && age >= 12 && age <= 17) match=true;
+    else if(category.includes('YOUTH') && age >= 18 && age <= 24) match=true;
+    else if(category.includes('YOUNG ADULT') && age >= 25 && age <= 34) match=true;
+    else if(category.includes('PRIME') && age >= 35 && age <= 44) match=true;
+    else if(category.includes('MATURE') && age >= 45 && age <= 54) match=true;
+    else if(category.includes('SENIOR') && age >= 55) match=true;
+
+    // GENDER
+    else if(category === 'MALE' && gender === 'MALE') match=true;
+    else if(category === 'FEMALE' && gender === 'FEMALE') match=true;
+
+    // CIVIL STATUS
+    else if(category === 'SINGLE' && civil === 'SINGLE') match=true;
+    else if(category === 'MARRIED' && civil === 'MARRIED') match=true;
+    else if(category === 'WIDOW' && civil === 'WIDOW') match=true;
+    else if(category === 'SEPARATED' && civil === 'SEPARATED') match=true;
+
+    // EDUCATION
+    else if(category === 'ELEMENTARY' && edu.includes('elementary')) match=true;
+    else if(category === 'JR HIGH SCHOOL' && edu.includes('jr')) match=true;
+    else if(category === 'SR HIGH SCHOOL' && edu.includes('sr')) match=true;
+    else if(category === 'COLLEGE UNDERGRAD' && edu.includes('under')) match=true;
+    else if(category === 'COLLEGE GRADUATE' && edu.includes('graduate')) match=true;
+    else if(category === 'VOCATIONAL COURSE' && edu.includes('vocational')) match=true;
+    else if(category.includes('ASSOCIATE') && edu.includes('associate')) match=true;
+
+    // OCCUPATION
+    else if(category === 'STUDENT' && occ === 'STUDENT') match=true;
+    else if(category === 'EMPLOYED' && occ === 'EMPLOYED') match=true;
+    else if(category === 'UNEMPLOYED' && occ === 'UNEMPLOYED') match=true;
+    else if(category === 'SELF EMPLOYED' && occ === 'SELF EMPLOYED') match=true;
+    else if(category === 'OFW' && occ === 'OFW') match=true;
+    else if(category === 'ON CALL' && occ === 'ON CALL') match=true;
+
+    if(match){
+
+      const card = document.createElement('div');
+
+      card.className = "window-card";
+
+      card.innerHTML = `
+
+        <div class="window-card-header">
+
+          <div class="window-card-title" style="color:blue;">
+            ${r['First Name'] || ''} ${r['Middle Name'] || ''} ${r['Last Name'] || ''}
+          </div>
+
+        <div class="window-card-controls">
+
+  <div class="win-mini-btn"
+    onclick="openFamilyProfileByIndex(${i})">
+    ▶️
+  </div>
+
+</div>
+
+        </div>
+
+
+        <div class="window-card-content">
+
+          <div><b>Age:</b> ${getAgeWithMonths(r['Date of Birth'])}</div>
+
+          <div><b>Date of Birth:</b> ${
+            r['Date of Birth']
+              ? new Date(r['Date of Birth']).toLocaleDateString('en-US')
+              : ''
+          }</div>
+
+          <div><b>Gender:</b> ${r['Gender'] || ''}</div>
+
+          <div><b>Civil Status:</b> ${r['Civil Status'] || ''}</div>
+
+          <div><b>Occupation:</b> ${r['Occupation'] || ''}</div>
+
+          <div><b>Address:</b> ${r['Address'] || ''}</div>
+
+          <div><b>Educational Status:</b> ${r['Educational Status'] || ''}</div>
+         <div><b>Remarks:</b> <span style="color:red;font-weight:bold;">${r['Remarks'] || ''}</span></div>
+        </div>
+      `;
+
+      body.appendChild(card);
+    }
+
+  });
+
+ }
+ function closePopup(){
+
+  const popup = document.getElementById('popupOverlay');
+
+  popup.style.display = 'none';
+
+  document.getElementById('popupBody').innerHTML = '';
+}
+
+function openFamilyProfile(r){
+
+  const age = getAgeFromDOB(r['Date of Birth']);
+
+  // SHOW DETAILS ONLY FOR 0-5 YEARS OLD
+  if(age > 5){
+    return;
+  }
+
+  const popup = document.getElementById('familyProfilePopup');
+  const body = document.getElementById('childDetailsBody');
+
+  popup.style.display = 'flex';
+
+  body.innerHTML = `
+    <div class="window-card">
+
+      <div class="window-card-content">
+
+        <div><b>Mother Name:</b> ${r['Mother Name'] || ''}</div>
+        <div><b>Father Name:</b> ${r['Father Name'] || ''}</div>
+        <div><b>Child Weight:</b> ${r['Child Weight'] || ''} kg</div>
+        <div><b>Child Height:</b> ${r['Child Height'] || ''} cm</div>
+
+        <hr>
+
+        <div><b>Mother Pregnant:</b> ${r['Mother Pregnant'] || ''}</div>
+
+<div><b>1st Tri:</b> ${r['1st Tri'] || ''}</div>
+<div><b>2nd Tri:</b> ${r['2nd Tri'] || ''}</div>
+<div><b>3rd Tri:</b> ${r['3rd Tri'] || ''}</div>
+
+<div><b>Family Planning:</b> ${r['Couple Practice Family Planning'] || ''}</div>
+
+        <hr>
+
+        <div><b>Feeding Type:</b> 
+          ${r['EBF'] ? 'EBF ' : ''}
+          ${r['Mixed Feeding'] ? 'Mixed ' : ''}
+          ${r['Bottle Fed'] ? 'Bottle ' : ''}
+          ${r['Others'] ? r['Others'] : ''}
+        </div>
+
+        <hr>
+
+        <div><b>Toilet Type:</b> ${r['Toilet Type'] || ''}</div>
+        <div><b>Water Source:</b> ${r['Water Source'] || ''}</div>
+        <div><b>Food Production:</b> ${r['Food Production Activity'] || ''}</div>
+
+        <hr>
+
+        <div><b>HH Iodized Salt:</b> ${r['HH Using Iodized Salt'] || ''}</div>
+        <div><b>HH IFR:</b> ${r['HH Using IFR'] || ''}</div>
+
+      </div>
+    </div>
+  `;
+}
+
+function openFamilyProfileByIndex(index){
+  const r = allResidents[index];
+  openFamilyProfile(r);
+}
+
+function closeFamilyProfile(){
+closeContinuePopup();
+  document.getElementById('familyProfilePopup').style.display = 'none';
+}
+
+/* CLICK OUTSIDE TO CLOSE */
+document.getElementById('popupOverlay').addEventListener('click', function(e){
+
+  if(e.target === this){
+    closePopup();
+  }
+
+});
+
+
+// Initial fetch
+fetchResidents();
+
+
+</script>
+</body>
+</html>
+
+
+
+
